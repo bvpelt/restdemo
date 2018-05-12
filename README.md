@@ -3,6 +3,7 @@
 See 
 - https://stackoverflow.com/questions/28228068/spring-boot-full-rest-crud-example
 - https://www.youtube.com/watch?v=zM5JEDpoUr0&feature=youtu.be
+- dependencies https://repository.sonatype.org/#welcome 
 
 # Rest
 http://www.rfc-base.org/rfc-2616.html 
@@ -15,7 +16,7 @@ Create a new resource and add it to the collection
 
 # Add an entry
 ``` 
-curl -H "Content-Type: application/json" -X POST -d '{"id": 1, "name": "account 1", "email": "account@test.com"}' http://localhost:8080/accounts/
+
 ```
 result
 ``` 
@@ -23,7 +24,7 @@ Account Created Successfully
 ```
 
 ``` 
-curl -v -H "Content-Type: application/json" -X POST -d '{"id": 2, "name": "account 2", "email": "account@test.com"}' http://localhost:8080/accounts/
+curl -v -H "Content-Type: application/json" -d '{"id": 2, "name": "account 2", "email": "account@test.com"}' http://localhost:8080/accounts/
 Note: Unnecessary use of -X or --request, POST is already inferred.
 *   Trying 127.0.0.1...
 * Connected to localhost (127.0.0.1) port 8080 (#0)
@@ -60,9 +61,30 @@ curl -v http://localhost:8080/accounts/
 * Connection #0 to host localhost left intact
 [{"name":"account 1","id":1,"email":"account@test.com"},{"name":"account 2","id":2,"email":"account@test.com"}]
 ```
+
+Update
+``` 
+curl -v -X PUT -H "Content-Type: application/json" -d '{"accountId": "3", "name": "account 33333", "email": "account@test.com"}' http://localhost:8080/accounts/3
+```
 # Database
 - createdb restdemo
 - createuser -P testuser 
 - psql restdemo
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO testuser;
 ALTER USER "testuser" WITH PASSWORD '12345';
+
+# Adres
+
+```
+curl -H "Content-Type: application/json" -d '{"straatNaam": "Jan Steenlaan", "huisNummer": "33", "postCode": "3904XL", "woonPlaats": "VEENENDAAL", "telefoonNummer": "0318540607"}' http://localhost:8080/adresses/
+
+```
+
+
+http://www.baeldung.com/spring-data-rest-intro
+
+http://www.baeldung.com/spring-data-rest-relationships
+
+http://www.springboottutorial.com/spring-boot-hateoas-for-rest-services
+
+https://howtodoinjava.com/spring/spring-boot2/rest-with-spring-hateoas-example/
