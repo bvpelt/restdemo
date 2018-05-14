@@ -8,15 +8,15 @@ import java.io.Serializable;
 @Entity
 @Table(name = "adres",
         uniqueConstraints = {
-        @UniqueConstraint(
-                columnNames = {
-                        "adres_postcode",
-                        "adres_huisnummer",
-                        "adres_huisnummertoevoeging"
-                }
+                @UniqueConstraint(
+                        columnNames = {
+                                "adres_postcode",
+                                "adres_huisnummer",
+                                "adres_huisnummertoevoeging"
+                        }
                 )
         }
-       )
+)
 public class Adres extends ResourceSupport implements Serializable {
 
     private static final long serialVersionUID = 2L;

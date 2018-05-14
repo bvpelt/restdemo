@@ -1,18 +1,20 @@
 package nl.bsoft.rest.restdemo01.domain;
 
+import org.springframework.hateoas.ResourceSupport;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "persoon")
-public class Person implements Serializable {
+public class Person extends ResourceSupport implements Serializable {
     private static final long serialVersionUID = 3L;
 
     @Id
     @GeneratedValue
     @Column(name = "persoon_id")
-    private Long id;
+    private Long personId;
 
     @Column(name = "persoon_roepnaam")
     private String roepNaam;
@@ -43,12 +45,12 @@ public class Person implements Serializable {
     @JoinColumn(name = "adres_id")
     private Adres adres;
 
-    public Long getId() {
-        return id;
+    public Long getPersonId() {
+        return personId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPersonId(Long personId) {
+        this.personId = personId;
     }
 
     public String getRoepNaam() {

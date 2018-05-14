@@ -32,7 +32,10 @@ public class AccountService {
     }
 
     public Account create(final Account account) {
-        Account savedAccount = repository.save(account);
+        Account savedAccount = null;
+
+        savedAccount = repository.save(account);
+
         return savedAccount;
     }
 

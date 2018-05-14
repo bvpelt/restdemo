@@ -31,7 +31,7 @@ public class AccountController extends ResourceSupport {
     AccountService service;
 
     @RequestMapping(value = "/accounts/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Resource<Account>> retrieveAccount(@PathVariable long id) {
+    public ResponseEntity<Resource<Account>> getAccountById(@PathVariable long id) {
         Optional<Account> account = service.findById(id);
         Resource<Account> resource = null;
 

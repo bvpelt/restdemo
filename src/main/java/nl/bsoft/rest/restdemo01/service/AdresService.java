@@ -30,7 +30,21 @@ public class AdresService {
     }
 
     public Adres create(final Adres adres) {
-        Adres savedAdres = repository.save(adres);
+        Adres savedAdres = null;
+
+        List<Adres> existingAdres = null;
+
+        if (null == adres.getHuisNummerToevoeging()) {
+            existingAdres = repository.findByAddress(adres.getPostCode(), adres.getHuisNummer());
+        } else {
+            existingAdres = repository.findByFullAddress(adres.getPostCode(), adres.getHuisNummer(), adres.getHuisNummerToevoeging());
+        }
+
+        if ((existingAdres != null) && (existingAdres.size() > 0)) {
+            logger.info("Adres already exists with id: " + existingAdres.get(0).getAdresId());
+        } else {
+            savedAdres = repository.save(adres);
+        }
         return savedAdres;
     }
 

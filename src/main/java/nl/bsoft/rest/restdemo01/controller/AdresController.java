@@ -81,12 +81,16 @@ public class AdresController extends ResourceSupport {
 
         Adres savedAdres = service.create(adres);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(savedAdres.getAdresId()).toUri();
+        if (null == savedAdres) {
+            return new ResponseEntity<Object>("Adres already exists", HttpStatus.NOT_MODIFIED);
+        } else {
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                    .buildAndExpand(savedAdres.getAdresId()).toUri();
 
-        logger.info("Adres id: " + savedAdres.getAdresId() + " saved");
+            logger.info("Adres id: " + savedAdres.getAdresId() + " saved");
 
-        return ResponseEntity.created(location).build();
+            return ResponseEntity.created(location).build();
+        }
     }
 
     @RequestMapping(value = "/adresses/{id}", method = RequestMethod.PUT)
