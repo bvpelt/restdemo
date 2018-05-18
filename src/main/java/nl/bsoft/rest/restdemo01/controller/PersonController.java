@@ -55,7 +55,32 @@ public class PersonController {
         PersonList personResult = new PersonList();
 
         for (Person person : personList) {
-            Link link = ControllerLinkBuilder.linkTo(PersonController.class)
+            Link link = ControllerLinkBuilder.linkTo(methodOn(this.getClass()).getPersons())
+                    .slash(person.getPersonId())
+                    .withSelfRel();
+
+            person.add(link.withRel("persons"));
+
+            personResult.getPersons().add(person);
+        }
+
+        //Adding self link accounts collection resource
+        Link selfLink = ControllerLinkBuilder
+                .linkTo(ControllerLinkBuilder.methodOn(PersonController.class).getPersons())
+                .withSelfRel();
+        personResult.add(selfLink);
+
+        return new ResponseEntity<PersonList>(personResult, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/persons/adres/{postCode}/{huisNummer}", method = RequestMethod.GET)
+    public ResponseEntity<PersonList> getPersonsAtAdres(@PathVariable String postCode, @PathVariable int huisNummer) {
+
+        List<Person> personList = service.getPersonsAtAdres(postCode, huisNummer);
+        PersonList personResult = new PersonList();
+
+        for (Person person : personList) {
+            Link link = ControllerLinkBuilder.linkTo(methodOn(this.getClass()).getPersons())
                     .slash(person.getPersonId())
                     .withSelfRel();
 
@@ -72,6 +97,7 @@ public class PersonController {
 
         return new ResponseEntity<PersonList>(personResult, HttpStatus.OK);
     }
+
 
     @RequestMapping(value = "/persons/adres/{postCode}/{huisNummer}/{huisNummerToevoeging}", method = RequestMethod.GET)
     public ResponseEntity<PersonList> getPersonsAtAdres(@PathVariable String postCode, @PathVariable int huisNummer, @PathVariable String huisNummerToevoeging) {

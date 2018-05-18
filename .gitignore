@@ -12,4 +12,4 @@ buildNumber.properties
 !/.mvn/wrapper/maven-wrapper.jar
 restdemo01.iml
 .idea
-restdemo.log
+restdemo.log*

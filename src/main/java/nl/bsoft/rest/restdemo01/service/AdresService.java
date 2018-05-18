@@ -2,6 +2,7 @@ package nl.bsoft.rest.restdemo01.service;
 
 import nl.bsoft.rest.restdemo01.domain.Adres;
 import nl.bsoft.rest.restdemo01.domain.AdresNotFound;
+import nl.bsoft.rest.restdemo01.domain.Person;
 import nl.bsoft.rest.restdemo01.repository.AdresRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +61,7 @@ public class AdresService {
             adresToBeUpdated.setStraatNaam(updatedAdres.getStraatNaam());
             adresToBeUpdated.setTelefoonNummer(updatedAdres.getTelefoonNummer());
             adresToBeUpdated.setWoonPlaats(updatedAdres.getWoonPlaats());
+            adresToBeUpdated.setPersonen(updatedAdres.getPersonen());
             repository.save(adresToBeUpdated);
         } else {
             throw new AdresNotFound("id: " + updatedAdres.getAdresId());
@@ -73,5 +75,21 @@ public class AdresService {
         } else {
             logger.error("Adres id: " + id + " not found");
         }
+    }
+
+    public List<Adres> getAdresAt(String postCode, int huisNummer) {
+        List<Adres> adresList = null;
+
+        adresList = repository.findByAddress(postCode, huisNummer);
+
+        return adresList;
+    }
+
+    public List<Adres> getAdresAt(String postCode, int huisNummer, String huisNummerToevoeging) {
+        List<Adres> adresList = null;
+
+        adresList = repository.findByFullAddress(postCode, huisNummer, huisNummerToevoeging);
+
+        return adresList;
     }
 }

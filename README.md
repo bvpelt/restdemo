@@ -88,3 +88,5 @@ http://www.baeldung.com/spring-data-rest-relationships
 http://www.springboottutorial.com/spring-boot-hateoas-for-rest-services
 
 https://howtodoinjava.com/spring/spring-boot2/rest-with-spring-hateoas-example/
+
+http://www.springboottutorial.com/integration-testing-for-spring-boot-rest-services

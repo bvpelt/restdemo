@@ -10,13 +10,13 @@ import java.util.List;
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
     public final static String FIND_PERSONS_BY_FULL_ADDRESS_QUERY = "SELECT p " +
-            "FROM Person p LEFT JOIN p.adres a " +
+            "FROM Adres a LEFT JOIN a.personen p " +
             "WHERE a.postCode = :postCode " +
             "AND a.huisNummer = :huisNummer " +
             "AND a.huisNummerToevoeging = :huisNummerToevoeging";
 
     public final static String FIND_PERSONS_BY_ADDRESS_QUERY = "SELECT p " +
-            "FROM Person p LEFT JOIN p.adres a " +
+            "FROM Adres a LEFT JOIN a.personen p " +
             "WHERE a.postCode = :postCode " +
             "AND a.huisNummer = :huisNummer";
 

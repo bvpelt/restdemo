@@ -44,7 +44,6 @@ public class PersonService {
 
         if (result.isPresent()) {
             personToBeUpdated = result.get();
-            personToBeUpdated.setAdres(updatedPerson.getAdres());
             personToBeUpdated.setAchterNaam(updatedPerson.getAchterNaam());
             personToBeUpdated.setEmailAdres(updatedPerson.getEmailAdres());
             personToBeUpdated.setGeboorteDatum(updatedPerson.getGeboorteDatum());
@@ -68,14 +67,19 @@ public class PersonService {
         }
     }
 
+    public List<Person> getPersonsAtAdres(String postCode, int huisNummer) {
+        List<Person> personList = null;
+
+        personList = repository.findByAddress(postCode, huisNummer);
+
+        return personList;
+    }
+
+
     public List<Person> getPersonsAtAdres(String postCode, int huisNummer, String huisNummerToevoeging) {
         List<Person> personList = null;
 
-        if (null == huisNummerToevoeging) {
-            personList = repository.findByAddress(postCode, huisNummer);
-        } else {
-            personList = repository.findByFullAddress(postCode, huisNummer, huisNummerToevoeging);
-        }
+        personList = repository.findByFullAddress(postCode, huisNummer, huisNummerToevoeging);
 
         return personList;
     }

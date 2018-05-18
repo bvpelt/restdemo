@@ -2,6 +2,8 @@ package nl.bsoft.rest.restdemo01.controller;
 
 import nl.bsoft.rest.restdemo01.domain.Adres;
 import nl.bsoft.rest.restdemo01.domain.AdresList;
+import nl.bsoft.rest.restdemo01.domain.Person;
+import nl.bsoft.rest.restdemo01.domain.PersonList;
 import nl.bsoft.rest.restdemo01.service.AdresService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,11 +59,11 @@ public class AdresController extends ResourceSupport {
         AdresList adresResult = new AdresList();
 
         for (Adres adres : adresList) {
-            Link link = ControllerLinkBuilder.linkTo(AdresController.class)
+            Link link = ControllerLinkBuilder.linkTo(methodOn(this.getClass()).getAdres())
                     .slash(adres.getAdresId())
-                    .withSelfRel();
+                    .withRel("adresses");
 
-            adres.add(link);
+            adres.add(link.withRel("adresses"));
 
             adresResult.getAdres().add(adres);
         }
@@ -112,6 +114,56 @@ public class AdresController extends ResourceSupport {
             service.delete(id);
             return new ResponseEntity<String>("Adres Deleted Successfully", HttpStatus.OK);
         }
+    }
+
+    @RequestMapping(value = "/adresses/{postCode}/{huisNummer}", method = RequestMethod.GET)
+    public ResponseEntity<AdresList> getAdresAt(@PathVariable String postCode, @PathVariable int huisNummer) {
+
+        List<Adres> adresList = service.getAdresAt(postCode, huisNummer);
+        AdresList adresResult = new AdresList();
+
+        for (Adres adres : adresList) {
+            Link link = ControllerLinkBuilder.linkTo(methodOn(this.getClass()).getAdres())
+                    .slash(adres.getAdresId())
+                    .withSelfRel();
+
+            adres.add(link);
+
+            adresResult.getAdres().add(adres);
+        }
+
+        //Adding self link accounts collection resource
+        Link selfLink = ControllerLinkBuilder
+                .linkTo(ControllerLinkBuilder.methodOn(AdresController.class).getAdres())
+                .withSelfRel();
+        adresResult.add(selfLink);
+
+        return new ResponseEntity<AdresList>(adresResult, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/adresses/{postCode}/{huisNummer}/{huisNummerToevoeging}", method = RequestMethod.GET)
+    public ResponseEntity<AdresList> getAdresAt(@PathVariable String postCode, @PathVariable int huisNummer, @PathVariable String huisNummerToevoeging) {
+
+        List<Adres> adresList = service.getAdresAt(postCode, huisNummer, huisNummerToevoeging);
+        AdresList adresResult = new AdresList();
+
+        for (Adres adres : adresList) {
+            Link link = ControllerLinkBuilder.linkTo(methodOn(this.getClass()).getAdres())
+                    .slash(adres.getAdresId())
+                    .withSelfRel();
+
+            adres.add(link);
+
+            adresResult.getAdres().add(adres);
+        }
+
+        //Adding self link accounts collection resource
+        Link selfLink = ControllerLinkBuilder
+                .linkTo(ControllerLinkBuilder.methodOn(AdresController.class).getAdres())
+                .withSelfRel();
+        adresResult.add(selfLink);
+
+        return new ResponseEntity<AdresList>(adresResult, HttpStatus.OK);
     }
 
 }

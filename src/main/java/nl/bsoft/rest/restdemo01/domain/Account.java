@@ -12,7 +12,9 @@ public class Account extends ResourceSupport implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accountSequence")
+    @SequenceGenerator(name = "accountSequence", sequenceName = "account_seq")
     @Column(name = "account_id")
     private Long accountId;
 
