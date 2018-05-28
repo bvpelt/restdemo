@@ -2,9 +2,6 @@ package nl.bsoft.rest.restdemo01.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
@@ -13,12 +10,10 @@ import java.util.Date;
 
 @Entity
 @Table(name = "persoon")
-//@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="personId")
 public class Person extends ResourceSupport implements Serializable {
     private static final long serialVersionUID = 3L;
 
     @Id
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "persoonSequence")
     @SequenceGenerator(name = "persoonSequence", sequenceName = "persoon_seq")
     @Column(name = "persoon_id")
@@ -50,7 +45,7 @@ public class Person extends ResourceSupport implements Serializable {
     private String mobielNummer;
 
     @ManyToOne
-    @JoinColumn(name="adres_id")
+    @JoinColumn(name = "adres_id")
     @JsonBackReference
     private Adres adres;
 

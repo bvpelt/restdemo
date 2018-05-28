@@ -1,17 +1,13 @@
 package nl.bsoft.rest.restdemo01.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "adres",
@@ -25,13 +21,12 @@ import java.util.Set;
                 )
         }
 )
-//@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="adresId")
+
 public class Adres extends ResourceSupport implements Serializable {
 
     private static final long serialVersionUID = 2L;
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "adresSequence")
     @SequenceGenerator(name = "adresSequence", sequenceName = "adres_seq")
     @Column(name = "adres_id")

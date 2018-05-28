@@ -2,8 +2,6 @@ package nl.bsoft.rest.restdemo01.controller;
 
 import nl.bsoft.rest.restdemo01.domain.Adres;
 import nl.bsoft.rest.restdemo01.domain.AdresList;
-import nl.bsoft.rest.restdemo01.domain.Person;
-import nl.bsoft.rest.restdemo01.domain.PersonList;
 import nl.bsoft.rest.restdemo01.service.AdresService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,18 +22,23 @@ import java.util.Optional;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class AdresController extends ResourceSupport {
 
     private static final Logger logger = LoggerFactory.getLogger(AdresController.class);
 
-    @Autowired
-    AdresService service;
+    private AdresService adresService;
 
+
+    @Autowired
+    public AdresController(final AdresService adresService) {
+        this.adresService = adresService;
+    }
 
     @RequestMapping(value = "/adresses/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Resource<Adres>> retrieveAdres(@PathVariable long id) {
-        Optional<Adres> adres = service.findById(id);
+    public ResponseEntity<Resource<Adres>> retrieveAdres(@PathVariable final long id) {
+        Optional<Adres> adres = adresService.findById(id);
         Resource<Adres> resource = null;
 
         if (!adres.isPresent()) {
@@ -55,7 +58,7 @@ public class AdresController extends ResourceSupport {
     @RequestMapping(value = "/adresses/", method = RequestMethod.GET)
     public ResponseEntity<AdresList> getAdres() {
 
-        List<Adres> adresList = service.getAll();
+        List<Adres> adresList = adresService.getAll();
         AdresList adresResult = new AdresList();
 
         for (Adres adres : adresList) {
@@ -79,9 +82,10 @@ public class AdresController extends ResourceSupport {
     }
 
     @RequestMapping(value = "/adresses/", method = RequestMethod.POST)
-    public ResponseEntity<Object> createAdres(@RequestBody Adres adres) {
+    public ResponseEntity<Object> createAdres(@RequestBody final Adres adres) {
 
-        Adres savedAdres = service.create(adres);
+
+        Adres savedAdres = adresService.create(adres);
 
         if (null == savedAdres) {
             return new ResponseEntity<Object>("Adres already exists", HttpStatus.NOT_MODIFIED);
@@ -96,30 +100,31 @@ public class AdresController extends ResourceSupport {
     }
 
     @RequestMapping(value = "/adresses/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<String> updateAdres(@PathVariable Long id, @RequestBody Adres adres) {
-        if (service.findById(id) == null) {
+    public ResponseEntity<String> updateAdres(@PathVariable final Long id, @RequestBody final Adres adres) {
+
+        if (adresService.findById(id) == null) {
             return new ResponseEntity<String>("Adres not found", HttpStatus.NOT_FOUND);
         } else {
-            service.update(adres);
+            adresService.update(id, adres);
             return new ResponseEntity<String>("Adres Updated Successfully", HttpStatus.OK);
         }
     }
 
 
     @RequestMapping(value = "/adresses/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteAdres(@PathVariable Long id) {
-        if (service.findById(id) == null) {
+    public ResponseEntity<String> deleteAdres(@PathVariable final Long id) {
+        if (adresService.findById(id) == null) {
             return new ResponseEntity<String>("Adres not found", HttpStatus.NOT_FOUND);
         } else {
-            service.delete(id);
+            adresService.delete(id);
             return new ResponseEntity<String>("Adres Deleted Successfully", HttpStatus.OK);
         }
     }
 
     @RequestMapping(value = "/adresses/{postCode}/{huisNummer}", method = RequestMethod.GET)
-    public ResponseEntity<AdresList> getAdresAt(@PathVariable String postCode, @PathVariable int huisNummer) {
+    public ResponseEntity<AdresList> getAdresAt(@PathVariable final String postCode, @PathVariable final int huisNummer) {
 
-        List<Adres> adresList = service.getAdresAt(postCode, huisNummer);
+        List<Adres> adresList = adresService.getAdresAt(postCode, huisNummer);
         AdresList adresResult = new AdresList();
 
         for (Adres adres : adresList) {
@@ -142,9 +147,9 @@ public class AdresController extends ResourceSupport {
     }
 
     @RequestMapping(value = "/adresses/{postCode}/{huisNummer}/{huisNummerToevoeging}", method = RequestMethod.GET)
-    public ResponseEntity<AdresList> getAdresAt(@PathVariable String postCode, @PathVariable int huisNummer, @PathVariable String huisNummerToevoeging) {
+    public ResponseEntity<AdresList> getAdresAt(@PathVariable final String postCode, @PathVariable final int huisNummer, @PathVariable final String huisNummerToevoeging) {
 
-        List<Adres> adresList = service.getAdresAt(postCode, huisNummer, huisNummerToevoeging);
+        List<Adres> adresList = adresService.getAdresAt(postCode, huisNummer, huisNummerToevoeging);
         AdresList adresResult = new AdresList();
 
         for (Adres adres : adresList) {

@@ -8,9 +8,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         "nl.bsoft.rest.restdemo01.repository",
         "nl.bsoft.rest.restdemo01.service",
         "nl.bsoft.rest.restdemo01"})
+
 public class Restdemo01Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Restdemo01Application.class, args);
     }
+
 }

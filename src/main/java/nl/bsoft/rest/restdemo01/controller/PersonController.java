@@ -21,17 +21,23 @@ import java.util.Optional;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class PersonController {
 
     private static final Logger logger = LoggerFactory.getLogger(PersonController.class);
 
+
+    private PersonService personService;
+
     @Autowired
-    PersonService service;
+    public PersonController(final PersonService personService) {
+        this.personService = personService;
+    }
 
     @RequestMapping(value = "/persons/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Resource<Person>> getPersonById(@PathVariable long id) {
-        Optional<Person> person = service.findById(id);
+    public ResponseEntity<Resource<Person>> getPersonById(@PathVariable final long id) {
+        Optional<Person> person = personService.findById(id);
         Resource<Person> resource = null;
 
         if (!person.isPresent()) {
@@ -51,7 +57,7 @@ public class PersonController {
     @RequestMapping(value = "/persons/", method = RequestMethod.GET)
     public ResponseEntity<PersonList> getPersons() {
 
-        List<Person> personList = service.getAll();
+        List<Person> personList = personService.getAll();
         PersonList personResult = new PersonList();
 
         for (Person person : personList) {
@@ -74,9 +80,9 @@ public class PersonController {
     }
 
     @RequestMapping(value = "/persons/adres/{postCode}/{huisNummer}", method = RequestMethod.GET)
-    public ResponseEntity<PersonList> getPersonsAtAdres(@PathVariable String postCode, @PathVariable int huisNummer) {
+    public ResponseEntity<PersonList> getPersonsAtAdres(@PathVariable final String postCode, @PathVariable final int huisNummer) {
 
-        List<Person> personList = service.getPersonsAtAdres(postCode, huisNummer);
+        List<Person> personList = personService.getPersonsAtAdres(postCode, huisNummer);
         PersonList personResult = new PersonList();
 
         for (Person person : personList) {
@@ -100,9 +106,9 @@ public class PersonController {
 
 
     @RequestMapping(value = "/persons/adres/{postCode}/{huisNummer}/{huisNummerToevoeging}", method = RequestMethod.GET)
-    public ResponseEntity<PersonList> getPersonsAtAdres(@PathVariable String postCode, @PathVariable int huisNummer, @PathVariable String huisNummerToevoeging) {
+    public ResponseEntity<PersonList> getPersonsAtAdres(@PathVariable final String postCode, @PathVariable final int huisNummer, @PathVariable final String huisNummerToevoeging) {
 
-        List<Person> personList = service.getPersonsAtAdres(postCode, huisNummer, huisNummerToevoeging);
+        List<Person> personList = personService.getPersonsAtAdres(postCode, huisNummer, huisNummerToevoeging);
         PersonList personResult = new PersonList();
 
         for (Person person : personList) {
@@ -126,9 +132,9 @@ public class PersonController {
 
 
     @RequestMapping(value = "/persons/", method = RequestMethod.POST)
-    public ResponseEntity<Object> createPerson(@RequestBody Person person) {
+    public ResponseEntity<Object> createPerson(@RequestBody final Person person) {
 
-        Person savedPerson = service.create(person);
+        Person savedPerson = personService.create(person);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(savedPerson.getPersonId())
@@ -140,21 +146,21 @@ public class PersonController {
     }
 
     @RequestMapping(value = "/persons/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<String> updatePerson(@PathVariable Long id, @RequestBody Person person) {
-        if (service.findById(id) == null) {
+    public ResponseEntity<String> updatePerson(@PathVariable final Long id, @RequestBody final Person person) {
+        if (personService.findById(id) == null) {
             return new ResponseEntity<String>("Person not found", HttpStatus.NOT_FOUND);
         } else {
-            service.update(person);
+            personService.update(person);
             return new ResponseEntity<String>("Person Updated Successfully", HttpStatus.OK);
         }
     }
 
     @RequestMapping(value = "/persons/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deletePerson(@PathVariable Long id) {
-        if (service.findById(id) == null) {
+    public ResponseEntity<String> deletePerson(@PathVariable final Long id) {
+        if (personService.findById(id) == null) {
             return new ResponseEntity<String>("Person not found", HttpStatus.NOT_FOUND);
         } else {
-            service.delete(id);
+            personService.delete(id);
             return new ResponseEntity<String>("Person Deleted Successfully", HttpStatus.OK);
         }
     }
