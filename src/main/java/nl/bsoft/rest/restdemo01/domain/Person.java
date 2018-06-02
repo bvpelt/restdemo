@@ -49,6 +49,42 @@ public class Person extends ResourceSupport implements Serializable {
     @JsonBackReference
     private Adres adres;
 
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Person)) {
+            return false;
+        }
+
+        Person that = (Person) other;
+
+        // Custom equality check here.
+        return this.roepNaam.equals(that.roepNaam)
+                && this.voorNamen.equals(that.voorNamen)
+                && this.tussenVoegsel.equals(that.tussenVoegsel)
+                && this.achterNaam.equals(that.achterNaam)
+                && this.geboorteDatum.equals(that.geboorteDatum)
+                && this.kerkelijkeStaat.equals(that.kerkelijkeStaat)
+                && this.emailAdres.equals(that.emailAdres)
+                && this.mobielNummer.equals(that.mobielNummer)
+                ;
+    }
+
+    @Override
+    public int hashCode() {
+        int hashCode = 17;
+
+        hashCode = hashCode * 37 + this.roepNaam.hashCode();
+        hashCode = hashCode * 37 + this.voorNamen.hashCode();
+        hashCode = hashCode * 37 + this.tussenVoegsel.hashCode();
+        hashCode = hashCode * 37 + this.achterNaam.hashCode();
+        hashCode = hashCode * 37 + this.geboorteDatum.hashCode();
+        hashCode = hashCode * 37 + this.kerkelijkeStaat.hashCode();
+        hashCode = hashCode * 37 + this.emailAdres.hashCode();
+        hashCode = hashCode * 37 + this.mobielNummer.hashCode();
+
+        return hashCode;
+    }
+
     public Long getPersonId() {
         return personId;
     }

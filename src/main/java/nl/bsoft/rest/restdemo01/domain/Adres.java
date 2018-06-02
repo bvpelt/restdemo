@@ -50,10 +50,73 @@ public class Adres extends ResourceSupport implements Serializable {
     @Column(name = "adres_telefoonnummer")
     private String telefoonNummer;
 
-    @OneToMany(orphanRemoval = true)
+    @OneToMany
     @JoinColumn(name = "adres_id") // join column is in table for Order
     @JsonManagedReference
     private List<Person> personen = new ArrayList<Person>(0);
+
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Adres)) {
+            return false;
+        }
+
+        Adres that = (Adres) other;
+
+        // Custom equality check here.
+        return this.straatNaam.equals(that.straatNaam)
+                && (this.huisNummer == that.huisNummer)
+                && this.huisNummerToevoeging.equals(that.huisNummerToevoeging)
+                && this.postCode.equals(that.postCode)
+                && this.woonPlaats.equals(that.woonPlaats)
+                && this.telefoonNummer.equals(that.telefoonNummer)
+                ;
+    }
+
+
+    @Override
+    public int hashCode() {
+        int hashCode = 17;
+
+        hashCode = hashCode * 37 + this.straatNaam.hashCode();
+        hashCode = hashCode * 37 + this.huisNummer;
+        hashCode = hashCode * 37 + this.huisNummerToevoeging.hashCode();
+        hashCode = hashCode * 37 + this.postCode.hashCode();
+        hashCode = hashCode * 37 + this.woonPlaats.hashCode();
+        hashCode = hashCode * 37 + this.telefoonNummer.hashCode();
+
+        return hashCode;
+    }
+
+    public String showData() {
+        String result = null;
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("adresId :");
+        sb.append(adresId);
+
+        sb.append(" straatNaam: ");
+        sb.append(straatNaam);
+
+        sb.append(" huisNummer: ");
+        sb.append(huisNummer);
+
+        sb.append(" huisNummerToevoeging: ");
+        sb.append(huisNummerToevoeging);
+
+        sb.append(" postCode: ");
+        sb.append(postCode);
+
+        sb.append(" woonPlaats: ");
+        sb.append(woonPlaats);
+
+        sb.append(" telefoonNummer: ");
+        sb.append(telefoonNummer);
+
+        result = sb.toString();
+        return result;
+    }
 
     public Long getAdresId() {
         return adresId;

@@ -1,6 +1,9 @@
 package nl.bsoft.rest.restdemo01.service;
 
-import nl.bsoft.rest.restdemo01.domain.*;
+import nl.bsoft.rest.restdemo01.domain.Adres;
+import nl.bsoft.rest.restdemo01.domain.AdresExists;
+import nl.bsoft.rest.restdemo01.domain.Person;
+import nl.bsoft.rest.restdemo01.domain.PersonIdNotAllowed;
 import nl.bsoft.rest.restdemo01.repository.AdresRepository;
 import nl.bsoft.rest.restdemo01.repository.PersonRepository;
 import org.slf4j.Logger;
@@ -9,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,13 +62,15 @@ public class AdresService {
             savedAdres = adresRepository.save(adres);
 
             if (savedAdres != null) {
-                for (Person p : adres.getPersonen()) {
-                    logger.info("Saving persoon: " + p.getPersonId() + " " + p.getRoepNaam() + " " + p.getTussenVoegsel() + " " + p.getAchterNaam());
-                    if (p.getPersonId() == null) {
-                        p.setAdres(savedAdres);
-                        personRepository.save(p);
-                    } else {
-                        throw new PersonIdNotAllowed("Persoon id: " + p.getPersonId() + " ingevuld, maar niet toegestaan");
+                if ((adres.getPersonen() != null) && (adres.getPersonen().size() > 0)) {
+                    for (Person p : adres.getPersonen()) {
+                        logger.info("Saving persoon: " + p.getPersonId() + " " + p.getRoepNaam() + " " + p.getTussenVoegsel() + " " + p.getAchterNaam());
+                        if (p.getPersonId() == null) {
+                            p.setAdres(savedAdres);
+                            personRepository.save(p);
+                        } else {
+                            throw new PersonIdNotAllowed("Persoon id: " + p.getPersonId() + " ingevuld, maar niet toegestaan");
+                        }
                     }
                 }
             }
@@ -72,30 +78,56 @@ public class AdresService {
         return savedAdres;
     }
 
-    public void update(final Long id, final Adres updatedAdres) {
-        Adres adresToBeUpdated = null;
-        Optional<Adres> result = adresRepository.findById(id);
+    public void update(final Adres originalAdres, final Adres newAdres) {
+        
+        if (originalAdres != null) {
+            originalAdres.setHuisNummer(newAdres.getHuisNummer());
+            originalAdres.setHuisNummerToevoeging(newAdres.getHuisNummerToevoeging());
+            originalAdres.setPostCode(newAdres.getPostCode());
+            originalAdres.setStraatNaam(newAdres.getStraatNaam());
+            originalAdres.setTelefoonNummer(newAdres.getTelefoonNummer());
+            originalAdres.setWoonPlaats(newAdres.getWoonPlaats());
 
-        if (result.isPresent()) {
-            adresToBeUpdated = result.get();
-            adresToBeUpdated.setHuisNummer(updatedAdres.getHuisNummer());
-            adresToBeUpdated.setHuisNummerToevoeging(updatedAdres.getHuisNummerToevoeging());
-            adresToBeUpdated.setPostCode(updatedAdres.getPostCode());
-            adresToBeUpdated.setStraatNaam(updatedAdres.getStraatNaam());
-            adresToBeUpdated.setTelefoonNummer(updatedAdres.getTelefoonNummer());
-            adresToBeUpdated.setWoonPlaats(updatedAdres.getWoonPlaats());
-            adresToBeUpdated.setPersonen(updatedAdres.getPersonen());
-            Adres savedAdres = adresRepository.save(adresToBeUpdated);
+            List<Person> newList = new ArrayList<Person>();
+            //
+            // Voor elk element in de lijst, controleer of die al bekend is en update deze
 
-            if (savedAdres != null) {
-                for (Person p : updatedAdres.getPersonen()) {
-                    logger.info("Saving persoon: " + p.getPersonId() + " " + p.getRoepNaam() + " " + p.getTussenVoegsel() + " " + p.getAchterNaam());
-                    p.setAdres(savedAdres);
-                    personRepository.save(p);
+            if ((originalAdres.getPersonen() != null) && (originalAdres.getPersonen().size() > 0)) {
+                for (Person person : originalAdres.getPersonen()) {
+                    boolean found = false;
+                    boolean equal = false;
+                    Long personId = person.getPersonId();
+
+                    for (Person refPerson : newAdres.getPersonen()) {
+                        found = (personId == refPerson.getPersonId());
+                        if (found) {
+                            equal = (person == refPerson);
+                            if (equal) {
+                                newList.add(person); // do nothing
+                            } else { // found but not equal
+                                person.setAchterNaam(refPerson.getAchterNaam());
+                                person.setVoorNamen(refPerson.getVoorNamen());
+                                person.setTussenVoegsel(refPerson.getTussenVoegsel());
+                                person.setRoepNaam(refPerson.getRoepNaam());
+                                person.setMobielNummer(refPerson.getMobielNummer());
+                                person.setKerkelijkeStaat(refPerson.getKerkelijkeStaat());
+                                person.setGeboorteDatum(refPerson.getGeboorteDatum());
+                                person.setEmailAdres(refPerson.getEmailAdres());
+                                person.setPersonId(refPerson.getPersonId());
+                                person.setAdres(originalAdres);
+                                newList.add(person);
+                                break;
+                            }
+                        }
+                    }
+                    if (!found) { // new person
+                        person.setAdres(originalAdres);
+                        newList.add(person);
+                    }
                 }
             }
-        } else {
-            throw new AdresNotFound("Adres met id: " + updatedAdres.getAdresId() + " niet gevonden");
+            originalAdres.setPersonen(newList);
+            Adres savedAdres = adresRepository.save(originalAdres);
         }
     }
 

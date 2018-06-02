@@ -82,30 +82,34 @@ public class AdresController extends ResourceSupport {
     }
 
     @RequestMapping(value = "/adresses/", method = RequestMethod.POST)
-    public ResponseEntity<Object> createAdres(@RequestBody final Adres adres) {
+    public ResponseEntity<Adres> createAdres(@RequestBody final Adres adres) {
 
+        logger.info("createAdres - post for: " + adres.showData());
 
         Adres savedAdres = adresService.create(adres);
 
         if (null == savedAdres) {
-            return new ResponseEntity<Object>("Adres already exists", HttpStatus.NOT_MODIFIED);
+            return new ResponseEntity<Adres>(savedAdres, HttpStatus.NOT_MODIFIED);
         } else {
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                     .buildAndExpand(savedAdres.getAdresId()).toUri();
 
             logger.info("Adres id: " + savedAdres.getAdresId() + " saved");
 
-            return ResponseEntity.created(location).build();
+            return new ResponseEntity<Adres>(savedAdres, HttpStatus.CREATED);
         }
     }
 
     @RequestMapping(value = "/adresses/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<String> updateAdres(@PathVariable final Long id, @RequestBody final Adres adres) {
+    public ResponseEntity<String> updateAdres(@PathVariable final Long id, @RequestBody final Adres newAdres) {
 
-        if (adresService.findById(id) == null) {
+        Optional<Adres> originalAdres = null;
+
+        originalAdres = adresService.findById(id);
+        if (!originalAdres.isPresent()) {
             return new ResponseEntity<String>("Adres not found", HttpStatus.NOT_FOUND);
         } else {
-            adresService.update(id, adres);
+            adresService.update(originalAdres.get(), newAdres);
             return new ResponseEntity<String>("Adres Updated Successfully", HttpStatus.OK);
         }
     }
